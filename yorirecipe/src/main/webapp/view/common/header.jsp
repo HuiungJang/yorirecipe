@@ -23,11 +23,9 @@
     </div>
     <nav id="menu">
         <ul>
-            <li><a class="underline" href="">KOREAN</a></li>
-            <li><a class="underline" href="">WESTERN</a></li>
-            <li><a class="underline" href="">CHINESE</a></li>
-            <li><a class="underline" href="">JAPANESE</a></li>
-            <li><a class="underline" href="">HEALTHY</a></li>
+            <li><a class="underline" href="">셰프랭</a></li>
+            <li><a class="underline" href="">추천식단</a></li>
+            <li><a class="underline" href="">레시피</a></li>
         </ul>
     </nav>
     <div id="submenu">
