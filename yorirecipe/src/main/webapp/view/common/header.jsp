@@ -23,7 +23,7 @@
     </div>
     <nav id="menu">
         <ul>
-            <li><a class="underline" href="">셰프랭</a></li>
+            <li><a class="underline" href="<%=request.getContextPath()%>/rankchef.do">셰프랭킹</a></li>
             <li><a class="underline" href="">추천식단</a></li>
             <li><a class="underline" href="">레시피</a></li>
         </ul>
