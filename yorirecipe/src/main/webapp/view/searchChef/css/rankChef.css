@@ -65,6 +65,8 @@ section{
 }
 
 .chefInfo{
+    font-family: 'Dosis', sans-serif, 'Nanum Gothic', sans-serif;
+    letter-spacing: 5px;
     font-size: 30px;
     font-weight: bold;
 }
@@ -72,4 +74,22 @@ section{
     padding-right: 35px;
     font-size: 20px;
     font-weight:normal;
+}
+
+/*페이지바*/
+#pageBar{
+    width: 300px;
+    margin:30px auto;
+    height: 30px;
+}
+#pageBar *{
+    padding-right: 20px;
+    font-size: 23px;
+    font-family: 'Dosis', sans-serif, 'Nanum Gothic', sans-serif;
+}
+#pageBar span{
+    color: #1F695B;
+}
+#pageBar a:hover{
+    color: #1F695B;
 }
