@@ -2,8 +2,6 @@ package com.yorirecipe.model.dao;
 
 import static com.yorirecipe.common.JDBCTemplate.*;
 import com.yorirecipe.model.vo.User;
-import com.yorirecipe.model.vo.UserRecommend;
-import oracle.jdbc.proxy.annotation.Pre;
 
 import java.io.FileReader;
 import java.io.IOException;
@@ -12,7 +10,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Properties;
 
@@ -28,16 +25,16 @@ public class UserDao {
         }
     }
 
-    // 셰프 등급만 전부 조회하기
-    public List<User> chefRankList(Connection conn){
+    // 셰프 등급만 전부 조회하기, 페이징처리
+    public List<User> chefRankList(Connection conn, int cPage, int numPerPage){
         PreparedStatement psmt = null;
         ResultSet rs = null;
         List<User> result = new ArrayList<>();
 
         try{
             psmt = conn.prepareStatement(pp.getProperty("chefRankList"));
-
-            psmt.setString(1,"cf");
+            psmt.setInt(1,(cPage-1)*numPerPage+1);
+            psmt.setInt(2,cPage*numPerPage);
 
             rs= psmt.executeQuery();
 
@@ -51,6 +48,7 @@ public class UserDao {
                 u.setMemberGrade(rs.getString("member_grade"));
                 u.setMemberPhone(rs.getString("member_phone"));
                 u.setMemberPoint(rs.getInt("member_point"));
+                u.setRecommendCount(rs.getInt("recommend_count"));
 
                 result.add(u);
             }
@@ -65,32 +63,27 @@ public class UserDao {
         return result;
     }
 
-    // 추천수 가져오는 메소드
-    public HashMap<String,Integer> recommendCount(Connection conn){
+    // 셰프가 몇명인지 세는 메소드
+    public int countChefList(Connection conn){
         PreparedStatement pstmt = null;
         ResultSet rs = null;
-        HashMap<String,Integer> result = new HashMap<>();
+        int result = 0;
+       try{
+           pstmt = conn.prepareStatement(pp.getProperty("countChefList"));
 
-        try{
-            pstmt = conn.prepareStatement(pp.getProperty("recommendCount"));
+           rs = pstmt.executeQuery();
 
-            rs = pstmt.executeQuery();
+           if(rs.next()){
+            result = rs.getInt(1);
+           }
 
-            while(rs.next()){
-                UserRecommend c = new UserRecommend();
-                c.setMemberId(rs.getString("member_id"));
-                c.setRecommendCount(rs.getInt("recommend_count"));
+       }catch (SQLException e){
+           e.printStackTrace();
+       }finally {
+           close(rs);
+           close(pstmt);
+       }
 
-                result.put(c.getMemberId(),c.getRecommendCount());
-            }
-
-        }catch (SQLException e){
-            e.printStackTrace();
-        }finally {
-            close(rs);
-            close(pstmt);
-        }
-
-        return result;
+       return result;
     }
 }

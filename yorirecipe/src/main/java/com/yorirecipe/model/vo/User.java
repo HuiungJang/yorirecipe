@@ -9,6 +9,7 @@ public class User {
     private String memberGrade;
     private int memberPoint;
     private String memberPhone;
+    private int recommendCount;
 
     public User() {
     }
@@ -75,5 +76,13 @@ public class User {
 
     public void setMemberPhone(String memberPhone) {
         this.memberPhone = memberPhone;
+    }
+
+    public int getRecommendCount() {
+        return recommendCount;
+    }
+
+    public void setRecommendCount(int recommendCount) {
+        this.recommendCount = recommendCount;
     }
 }

@@ -17,12 +17,52 @@ public class RankChefServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        // 셰프등급 전체 가져옴
-        List<User> chefInfo = new UserService().chefRankList();
-        HashMap<String,Integer> recommend = new UserService().recommendCount();
 
-        request.setAttribute("recommend",recommend);
+        int cPage;
+        int numPerPage=10;
+        // 한페이지에 10명씩 보여줌
+        try{
+            cPage= Integer.parseInt(request.getParameter("cPage"));
+        }catch (NumberFormatException e){
+            cPage=1;
+        }
+
+        // 셰프등급회원 전체 추천수 순으로 가져옴
+        List<User> chefInfo = new UserService().chefRankList(cPage,numPerPage);
+
+        int totalData = new UserService().countChefList();
+        int totalPage = (int)(Math.ceil((double)totalData/numPerPage));
+        int pageBarSize = 5;
+        int pageNo = ((cPage-1)/pageBarSize) * pageBarSize +1;
+        int pageEnd = pageNo+pageBarSize-1;
+
+        String pageBar = "";
+
+        if(pageNo == 1){
+            pageBar+="<span></span>";
+
+        }else{
+            pageBar+="<span><a href='"+request.getContextPath()+"/rankchef.do?cPage="+(cPage-1)+"'>이전</a></span>";
+        }
+
+        while(!(pageNo>pageEnd||pageNo>totalPage)){
+            if(cPage==pageNo){
+                pageBar+="<span>"+pageNo+"</span>";
+            }else{
+                pageBar+="<span><a href='"+request.getContextPath()+"/rankchef.do?cPage="+pageNo+"'>"+pageNo+"</a></span>";
+            }
+            pageNo++;
+        }
+
+        if(pageNo>totalPage){
+            pageBar+="<span></span>";
+        }else{
+            pageBar+="<span><a href='"+request.getContextPath()+"/chef/rankchef.do?cPage="+cPage+"'>다음</a></span>";
+        }
+
+        request.setAttribute("pageBar",pageBar);
         request.setAttribute("chefInfo",chefInfo);
+        request.setAttribute("trophyRef",cPage);
         request.getRequestDispatcher("/view/searchChef/RankChef.jsp").forward(request,response);
     }
 
