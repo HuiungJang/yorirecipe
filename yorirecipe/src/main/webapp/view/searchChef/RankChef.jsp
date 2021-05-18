@@ -1,6 +1,7 @@
-<%@ page import="com.yorirecipe.model.vo.User" %>
+<%@ page import="com.yoriessence.chef.model.vo.User" %>
 <%@ page import="java.util.List" %>
-<%@ page import="java.util.HashMap" %><%--
+<%@ page import="java.util.HashMap" %>
+<%@ page import="com.yoriessence.chef.model.vo.Profile" %><%--
   Created by IntelliJ IDEA.
   User: jang
   Date: 2021/05/08
@@ -12,6 +13,7 @@
 <link  type="text/css" rel="stylesheet" href="${pageContext.request.contextPath}/view/searchChef/css/rankChef.css" />
 <%
     List<User> chefInfo= (List<User>)request.getAttribute("chefInfo");
+    List<Profile> chefProfileAll =(List<Profile>)request.getAttribute("chefProfileAll");
 %>
 <section>
 <div id="rankContainer">
@@ -51,15 +53,28 @@
                 </div>
                 <div class="list">
                     <div class="chef">
-                        <a href=""><img src="https://recipe1.ezmember.co.kr/cache/recipe/2020/08/18/32775e06923a4bef0cb6093ff84d28ef1.jpg" height="200px" width="200px" style="border-radius: 200px"></a>
+                        <a href="<%=request.getContextPath()%>/searchchef.do?chefsearch=<%=chefInfo.get(i).getMemberId()%>">
+
+                            <% if(chefProfileAll.get(i).getProfilePic() != null) {%>
+                                <img src="<%=chefProfileAll.get(i).getProfilePic()%>" class="moveProfile" height="200px" width="200px" style="border-radius: 200px">
+                            <%}else{%>
+                                <img src="<%=request.getContextPath()%>/img/icon/icon_non_sns.png" class="moveProfile" height="200px" width="200px" style="border-radius: 200px">
+                            <%}%>
+
+                        </a>
                         <div class="chefInfo">
-                            <a href=""><p><%=chefInfo.get(i).getMemberName()%></p></a>
+                            <a href="<%=request.getContextPath()%>/searchchef.do?chefsearch=<%=chefInfo.get(i).getMemberId()%>">
+                                <p class="moveProfile">
+                                    <%=chefInfo.get(i).getMemberName()%>
+                                </p>
+                            </a>
                             <span><button>DM 보내기</button></span>
                             <span><img src="<%=request.getContextPath()%>/img/icon/recommend_click.png" width="25px" height="25px"> <%=chefInfo.get(i).getRecommendCount()%></span>
-            <%--                좋아요 이미지 넣을 예정--%>
                         </div>
                     </div>
                 </div>
+                <script>
+                </script>
             <%}%>
         <%}%>
     </div>

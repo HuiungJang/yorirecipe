@@ -6,16 +6,16 @@ section{
     padding :20px;
     overflow:hidden;
 }
-
+/* 프로필 부분 */
 #chef_Profile{
     width:900px;
     display:flex;
     align-items:center;
     margin:30px auto;
     padding-bottom:20px;
-    border-bottom:1px solid black;
+    border-bottom:1px #1f695b solid;
     padding-top: 20px;
-    border-top:1px solid black;
+    border-top:1px #1f695b solid;
 
     justify-content:space-between;
 }
@@ -29,9 +29,7 @@ section{
 #picContainer{
     margin-left: 30px;
 }
-#picContainer>img{
-    border-radius: 200px;
-}
+
 
 #chefTitle{
     font-weight: bold;
@@ -47,8 +45,27 @@ section{
 #chef_content{
     margin-left: 50px;
 }
+#snsIcon1{
+    width: 40px;
+    height: 40px;
+    margin-right: 20px;
+}
+#snsIcon2{
+    width: 40px;
+    height: 40px;
+    margin-right: 20px;
+}
 
+/* 레시피 부분*/
 
+#sort{
+    width:250px;
+    margin-left: 800px;
+}
+
+#sort a{
+    cursor:pointer;
+}
 
 .grid{
     margin:0 auto;
