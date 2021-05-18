@@ -1,4 +1,4 @@
-package com.yorirecipe.model.vo;
+package com.yoriessence.chef.model.vo;
 
 public class Profile {
     private String memberId;

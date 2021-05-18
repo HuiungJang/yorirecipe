@@ -1,7 +1,9 @@
-package com.yorirecipe.controller.rankchef;
+package com.yoriessence.chef.controller.rankchef;
 
-import com.yorirecipe.model.service.UserService;
-import com.yorirecipe.model.vo.User;
+
+import com.yoriessence.chef.model.service.UserService;
+import com.yoriessence.chef.model.vo.Profile;
+import com.yoriessence.chef.model.vo.User;
 
 import javax.servlet.*;
 import javax.servlet.http.*;
@@ -29,6 +31,9 @@ public class RankChefServlet extends HttpServlet {
 
         // 셰프등급회원 전체 추천수 순으로 가져옴
         List<User> chefInfo = new UserService().chefRankList(cPage,numPerPage);
+
+        // 셰프등급회원 전체 프로필을 추천순으로 가져옴
+        List<Profile> chefProfileAll = new UserService().chefProfileAll();
 
         int totalData = new UserService().countChefList();
         int totalPage = (int)(Math.ceil((double)totalData/numPerPage));
@@ -60,6 +65,8 @@ public class RankChefServlet extends HttpServlet {
             pageBar+="<span><a href='"+request.getContextPath()+"/chef/rankchef.do?cPage="+cPage+"'>다음</a></span>";
         }
 
+
+        request.setAttribute("chefProfileAll",chefProfileAll);
         request.setAttribute("pageBar",pageBar);
         request.setAttribute("chefInfo",chefInfo);
         request.setAttribute("trophyRef",cPage);
