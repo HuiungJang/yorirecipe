@@ -44,6 +44,10 @@ section{
 
 .recommendButton:hover .tooltip{
     visibility: visible;
+    bottom:100%;
+    left:5%;
+    border: 1px #1f695b solid;
+
 }
 
 #prev_recipe_button .recommend_recipe_title{
@@ -110,6 +114,7 @@ section{
 }
 #pageBar span{
     color: #1F695B;
+    margin-left: 60px;
 }
 #pageBar a:hover{
     color: #1F695B;
