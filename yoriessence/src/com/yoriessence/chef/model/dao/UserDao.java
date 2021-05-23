@@ -502,4 +502,177 @@ public class UserDao {
 
         return result;
     }
+
+    /*
+
+     추천 레시피
+
+     */
+    public List<Recipe> todayRecipe(Connection conn,int sortday1, int sortday2){
+        // 베스트 레시피 3개 가져오는 메소드
+        PreparedStatement pstmt=null;
+        ResultSet rs=null;
+        List<Recipe> list=new ArrayList<>();
+        try{
+            pstmt=conn.prepareStatement(pp.getProperty("todayRecipe"));
+
+            pstmt.setInt(1,sortday1);
+            pstmt.setInt(2,sortday2);
+
+            rs=pstmt.executeQuery();
+            while(rs.next()) {
+                Recipe r=new Recipe();
+                r.setRecipeEnrollNo(rs.getInt("recipe_enroll_no"));
+                r.setMemberId(rs.getString("member_id"));
+                r.setRecipeTitle(rs.getString("recipe_title"));
+                r.setRecipeIntro(rs.getString("recipe_intro"));
+                r.setRepresentPicture(rs.getString("represent_picture"));
+                r.setRecipeVideoAddress(rs.getString("recipe_video_address"));
+                r.setRecipeCategory(rs.getString("recipe_category"));
+                r.setRecipeInfoHowmany(rs.getInt("recipe_info_howmany"));
+                r.setRecipeInfoTime(rs.getInt("recipe_info_time"));
+                r.setRecipeDifficult(rs.getString("recipe_difficult"));
+                r.setRecipeProcedure(rs.getString("recipe_procedure"));
+                r.setRecipeTip(rs.getString("recipe_tip"));
+                r.setRecipeViewCount(rs.getInt("recipe_view_count"));
+
+                list.add(r);
+            }
+        }catch(SQLException e) {
+            e.printStackTrace();
+        }finally {
+            close(rs);
+            close(pstmt);
+        }
+
+        System.out.println("베스트 레시피 3개 보냄");
+        return list;
+    }
+
+    public List<Recipe> periodRecipe(Connection conn, int cPage, int numPerPage, String sortRef){
+        // 추천식단 데이터 가져오는 메소드
+
+        PreparedStatement pstmt=null;
+        ResultSet rs=null;
+        List<Recipe> list=new ArrayList<>();
+        try{
+
+            if(sortRef.equals("주간")){
+                pstmt = conn.prepareStatement(pp.getProperty("weeklyRecipe"));
+
+            }else if(sortRef.equals("월간")){
+                pstmt = conn.prepareStatement(pp.getProperty("monthlyRecipe"));
+
+            }else{
+                pstmt=conn.prepareStatement(pp.getProperty("periodRecipe"));
+            }
+
+
+            pstmt.setInt(1,(cPage-1)*numPerPage+1);
+            pstmt.setInt(2,cPage*numPerPage);
+
+            rs=pstmt.executeQuery();
+
+            while(rs.next()) {
+                Recipe r=new Recipe();
+                r.setRecipeEnrollNo(rs.getInt("recipe_enroll_no"));
+                r.setMemberId(rs.getString("member_id"));
+                r.setRecipeTitle(rs.getString("recipe_title"));
+                r.setRecipeIntro(rs.getString("recipe_intro"));
+                r.setRepresentPicture(rs.getString("represent_picture"));
+                r.setRecipeVideoAddress(rs.getString("recipe_video_address"));
+                r.setRecipeCategory(rs.getString("recipe_category"));
+                r.setRecipeInfoHowmany(rs.getInt("recipe_info_howmany"));
+                r.setRecipeInfoTime(rs.getInt("recipe_info_time"));
+                r.setRecipeDifficult(rs.getString("recipe_difficult"));
+                r.setRecipeProcedure(rs.getString("recipe_procedure"));
+                r.setRecipeTip(rs.getString("recipe_tip"));
+                r.setRecipeViewCount(rs.getInt("recipe_view_count"));
+                list.add(r);
+            }
+
+        }catch(SQLException e) {
+            e.printStackTrace();
+        }finally {
+            close(rs);
+            close(pstmt);
+        }
+
+        System.out.println("추천화면 데이터 출력");
+        return list;
+    }
+
+    public List<Integer> countRecipeLike(Connection conn){
+        // 레시피 좋아요 수 가져오는 메소드
+        PreparedStatement psmt= null;
+        ResultSet rs = null;
+        List<Integer> result = new ArrayList<>();
+
+        try{
+            psmt = conn.prepareStatement(pp.getProperty("countRecipeLike"));
+
+            rs = psmt.executeQuery();
+
+            while(rs.next()){
+                result.add(rs.getInt(1));
+            }
+
+        }catch (SQLException e){
+            e.printStackTrace();
+        }finally {
+            close(rs);
+            close(psmt);
+        }
+
+        return  result;
+    }
+
+    public List<Integer> countRecipeComment(Connection conn){
+        // 레시피 댓글 수 가져오는 메소드
+        PreparedStatement psmt= null;
+        ResultSet rs = null;
+        List<Integer> result = new ArrayList<>();
+
+        try{
+            psmt = conn.prepareStatement(pp.getProperty("countRecipeComment"));
+
+            rs = psmt.executeQuery();
+
+            while(rs.next()){
+                result.add(rs.getInt(1));
+            }
+
+        }catch (SQLException e){
+            e.printStackTrace();
+        }finally {
+            close(rs);
+            close(psmt);
+        }
+
+        return  result;
+    }
+
+    public int countRecipeList(Connection conn){
+        // 레시피 수 세는 메소드
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
+        int result = 0;
+        try{
+            pstmt = conn.prepareStatement(pp.getProperty("countRecipeList"));
+
+            rs = pstmt.executeQuery();
+
+            if(rs.next()){
+                result = rs.getInt(1);
+            }
+
+        }catch (SQLException e){
+            e.printStackTrace();
+        }finally {
+            close(rs);
+            close(pstmt);
+        }
+
+        return result;
+    }
 }
