@@ -76,8 +76,6 @@
                         </div>
                     </div>
                 </div>
-                <script>
-                </script>
             <%}%>
         <%}%>
     </div>
@@ -97,13 +95,69 @@
 
   $("#sortForm .button").click(e=>{
     $.ajax({
-      url:"<%=request.getContextPath()%>/sortrankchef.do",
+      url:"<%=request.getContextPath()%>/sortchefajax.do",
       data:{
         "chefRankPageSortRef":$(e.target).val()
       },
       success:data=>{
-        console.log("정렬됨");
-      }
+        let val ='';
+        $("#content *").remove();
+
+        $(data).each((i,v)=>{
+            console.log(v);
+
+            if(v.chefInfo[i] !== null){
+                for(let i=0; i<v.chefInfo.length; i++){
+
+                  val += '<div class="rankImg">';
+                  if(i === 0) {
+                    val += '<span><img class="trophy" src="<%=request.getContextPath()%>/img/icon/chef_1st.png" width="100px" height="150px"></span>';
+
+                  }else if(i === 1){
+                    val += '<span><img class="trophy" src="<%=request.getContextPath()%>/img/icon/chef_2nd.png" width="100px" height="150px"></span>';
+
+                  }else if(i === 2){
+                    val += '<span><img class="trophy" src="<%=request.getContextPath()%>/img/icon/chef_3rd.png" width="100px" height="150px"></span>';
+
+                  }else{
+                    val += '<span ><img class="normal" src="<%=request.getContextPath()%>/img/icon/normal_user.png" width="100px" height="150px"></span>';
+                  }
+                  val += '</div>';
+
+                  val += '<div class="list">';
+                  val += '<div class="chef">';
+
+                  val += '<a href="<%=request.getContextPath()%>/searchchef.do?chefsearch='+v.chefInfo[i].memberNickName+'">';
+                  if(v.chefInfo[i].profilePic != null) {
+                    val += '<img src="<%=request.getContextPath()%>/upload/profile/'+v.chefInfo[i].profilePic+' class="moveProfile" height="200px" width="200px" style="border-radius: 200px; border: #0A1329 1px solid">';
+                  }else {
+                    val += '<img src="<%=request.getContextPath()%>/img/icon/non_profile.png" class="moveProfile" height="200px" width="200px" style="border-radius: 200px">';
+                  }
+                  val += '</a>';
+
+                  val += '<div class="chefInfo">';
+                  val += '<a href="<%=request.getContextPath()%>/searchchef.do?chefsearch='+v.chefInfo[i].memberNickName+'">';
+                  val += '<p class="moveProfile">'+v.chefInfo[i].memberName+'</p>';
+                  val += '</a>';
+
+                  val += '<span><button>DM 보내기</button></span>';
+                  val += '<span><img src="<%=request.getContextPath()%>/img/icon/recommend_click.png" width="25px" height="25px">'+v.chefInfo[i].recommendCount+'</span>';
+                  val += '</div>';
+                  val += '</div>';
+                  val += '</div>';
+
+
+                  $("#content").append(val);
+                }
+            }
+
+        });
+      },
+      error:(e,m,i)=>{
+        console.log(e);
+        console.log(m);
+        console.log(i);
+    }
     });
   })
 </script>
