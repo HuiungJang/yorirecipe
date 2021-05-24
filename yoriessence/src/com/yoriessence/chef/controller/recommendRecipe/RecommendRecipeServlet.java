@@ -28,7 +28,6 @@ public class RecommendRecipeServlet extends HttpServlet {
             sortday2 = 1;
         }
 
-
         int cPage;
         int numPerPage = 12;
 
@@ -87,7 +86,7 @@ public class RecommendRecipeServlet extends HttpServlet {
         if(pageNo>totalPage){
             pageBar+="<span></span>";
         }else{
-            pageBar+="<span><a href='"+request.getContextPath()+"/chef/bestrecipe.do?cPage="+cPage+"'>다음</a></span>";
+            pageBar+="<span><a href='"+request.getContextPath()+"/bestrecipe.do?cPage="+cPage+"'>다음</a></span>";
         }
 
         request.setAttribute("pageBar",pageBar);

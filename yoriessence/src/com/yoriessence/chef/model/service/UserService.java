@@ -3,8 +3,7 @@ package com.yoriessence.chef.model.service;
 
 
 import com.yoriessence.chef.model.dao.UserDao;
-import com.yoriessence.chef.model.vo.Profile;
-import com.yoriessence.chef.model.vo.User;
+import com.yoriessence.chef.model.vo.*;
 import com.yoriessence.recipe.model.vo.Recipe;
 
 import static com.yoriessence.common.JDBCTemplate.*;
@@ -133,10 +132,34 @@ public class UserService {
         return getRecipe;
     }
 
-    public List<User> SortRankChefServlet(int cPage,int numPerPage,String sortRef){
+    public List<RecipeRecommend> recipeRecommendNum(String chefId, String sortVal,int cPage,int numPerPage){
+        Connection conn = getConnection();
+        List<RecipeRecommend> recipeRecommend =dao.recipeRecommendNum(conn,chefId,sortVal,cPage,numPerPage);
+        close(conn);
+
+        return recipeRecommend;
+    }
+    public List<RecipeComment> recipeCommentNum(String chefId){
+        Connection conn = getConnection();
+        List<RecipeComment> RecipeComment =dao.recipeCommentNum(conn,chefId);
+        close(conn);
+
+        return RecipeComment;
+    }
+
+    public List<SortRankChef> SortRankChefAJax(int cPage,int numPerPage,String sortRef){
         // 셰프랭킹 페이지 랭킹별정렬하는 서비스
         Connection conn = getConnection();
-        List<User> result = dao.SortRankChefServlet(conn,cPage,numPerPage,sortRef);
+        List<SortRankChef> result = dao.SortRankChefAJax(conn,cPage,numPerPage,sortRef);
+        close(conn);
+
+        return result;
+    }
+
+    public List<User> SortRankChef(int cPage,int numPerPage,String sortRef){
+        // 셰프랭킹 페이지 랭킹별정렬하는 서비스
+        Connection conn = getConnection();
+        List<User> result = dao.SortRankChef(conn,cPage,numPerPage,sortRef);
         close(conn);
 
         return result;
@@ -229,4 +252,6 @@ public class UserService {
 
         return result;
     }
+
+
 }

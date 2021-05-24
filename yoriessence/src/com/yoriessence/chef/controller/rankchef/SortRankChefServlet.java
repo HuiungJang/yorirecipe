@@ -32,7 +32,7 @@ public class SortRankChefServlet extends HttpServlet {
         // 페이지 처리하고 request에 정보 담는 클래스
         new RankChefTemplateServlet().doPost(request,response);
 
-        List<User> sortRank = new UserService().SortRankChefServlet(cPage,numPerPage,chefRankPageSortRef);
+        List<User> sortRank = new UserService().SortRankChef(cPage,numPerPage,chefRankPageSortRef);
         request.setAttribute("chefInfo",sortRank);
 
         request.getRequestDispatcher("/view/searchChef/RankChef.jsp").forward(request,response);

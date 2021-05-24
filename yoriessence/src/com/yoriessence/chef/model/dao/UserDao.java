@@ -2,8 +2,7 @@ package com.yoriessence.chef.model.dao;
 
 import static com.yoriessence.common.JDBCTemplate.*;
 
-import com.yoriessence.chef.model.vo.Profile;
-import com.yoriessence.chef.model.vo.User;
+import com.yoriessence.chef.model.vo.*;
 import com.yoriessence.recipe.model.vo.Recipe;
 
 
@@ -240,8 +239,99 @@ public class UserDao {
         return recipeList;
     }
 
+    public List<RecipeRecommend> recipeRecommendNum(Connection conn, String chefId, String sortVal,int cPage,int numPerPage){
+        // ajax로 요청시
+        PreparedStatement psmt = null;
+        ResultSet rs = null;
+        List<RecipeRecommend> recipeRecommend = new ArrayList<>();
+
+        try {
+            psmt=conn.prepareStatement(pp.getProperty("countRecipeRecommend"));
+            psmt.setString(1,chefId);
+
+            if(sortVal.equals("추천순")){
+                psmt.setString(2,"recipe_recommend_num");
+
+            }else if(sortVal.equals("최신순")){
+                psmt.setString(2,"Recipe_enroll_no");
+
+            }else if(sortVal.equals("조회순")){
+                psmt.setString(2,"Recipe_view_count");
+            }
+
+            psmt.setInt(3,(cPage-1)*numPerPage+1);
+            psmt.setInt(4,cPage*numPerPage);
+
+            rs = psmt.executeQuery();
+
+            while(rs.next()){
+                RecipeRecommend r = new RecipeRecommend();
+
+                r.setRecipeEnrollNum(rs.getInt("recipe_enroll_no"));
+                r.setMemberId(rs.getString("member_id"));
+                r.setRecipeTitle(rs.getString("recipe_title"));
+                r.setRecipeViewCount(rs.getInt("recipe_view_count"));
+                r.setRecipeRecommendNum(rs.getInt("recipe_recommend_num"));
+                r.setRepresentPicture(rs.getString("represent_picture"));
+
+                recipeRecommend.add(r);
+            }
+
+        }catch (SQLException e){
+            e.printStackTrace();
+
+        }finally {
+            close(rs);
+            close(psmt);
+        }
+
+        return recipeRecommend;
+    }
+
+    public List<RecipeComment> recipeCommentNum(Connection conn, String chefId){
+
+        PreparedStatement psmt = null;
+        ResultSet rs = null;
+        List<RecipeComment> recipeCommentNum = new ArrayList<>();
+
+        try {
+            psmt = conn.prepareStatement(pp.getProperty("countComment"));
+            psmt.setString(1,chefId);
+
+            rs = psmt.executeQuery();
+
+            while(rs.next()){
+                RecipeComment c = new RecipeComment();
+
+                c.setMemberId(rs.getString("member_id"));
+                c.setMemberName(rs.getString("member_name"));
+                c.setMemberNickName(rs.getString("member_nickname"));
+                c.setRecipeEnrollNo(rs.getInt("recipe_enroll_no"));
+                c.setCountRecipeComment(rs.getInt("count_recipe_comment"));
+                c.setRepresentPicture(rs.getString("represent_picture"));
+
+
+                recipeCommentNum.add(c);
+            }
+
+        }catch (SQLException e){
+            e.printStackTrace();
+
+        }finally {
+            close(rs);
+            close(psmt);
+        }
+
+        return recipeCommentNum;
+
+    }
+
+
     public List<Integer> countComment(Connection conn, String chefName){
         // 레시피별 댓글 갯수 가져오는 메소드
+        // 수정해야함 결과값 인트 1개 아님
+        // vo 새로만듦 참고하자.
+
         PreparedStatement psmt= null;
         ResultSet rs = null;
         List<Integer> result = new ArrayList<>();
@@ -268,6 +358,9 @@ public class UserDao {
 
     public List<Integer> countRecipeRecommend(Connection conn, String chefName){
         // 레시피 별 추천수 가져오는 메소드
+        // 수정해야함 결과값 인트 1개 아님
+        // vo 새로만듦 참고하자.
+
         PreparedStatement psmt= null;
         ResultSet rs = null;
         List<Integer> result = new ArrayList<>();
@@ -277,6 +370,15 @@ public class UserDao {
 
             psmt.setString(1,chefName);
             rs = psmt.executeQuery();
+
+
+            /*
+
+
+            쿼리문 , 로직 수정해야함
+
+
+             */
 
             while(rs.next()){
                 result.add(rs.getInt(1));
@@ -390,7 +492,53 @@ public class UserDao {
         return recipeList;
     }
 
-    public List<User> SortRankChefServlet(Connection conn, int cPage, int numPerPage,String sortRef){
+    public List<SortRankChef> SortRankChefAJax(Connection conn, int cPage, int numPerPage,String sortRef){
+        // 셰프랭킹 페이지 랭킹별정렬하는 메소드
+
+        PreparedStatement psmt = null;
+        ResultSet rs = null;
+        List<SortRankChef> result = new ArrayList<>();
+
+        try{
+            if(sortRef.equals("일간랭킹")){
+                psmt = conn.prepareStatement(pp.getProperty("sortChefDaily"));
+
+
+            }else if(sortRef.equals("주간랭킹")){
+                psmt = conn.prepareStatement(pp.getProperty("sortChefWeekly"));
+
+            }else{
+                psmt = conn.prepareStatement(pp.getProperty("sortChefMonthly"));
+
+            }
+            psmt.setInt(1,(cPage-1)*numPerPage+1);
+            psmt.setInt(2,cPage*numPerPage);
+
+
+            rs= psmt.executeQuery();
+
+            while(rs.next()){
+                SortRankChef s = new SortRankChef();
+                s.setRecommendCount(rs.getInt("recommend_count"));
+                s.setMemberId(rs.getString("member_id"));
+                s.setProfilePic(rs.getString("profile_pic"));
+                s.setProfileName(rs.getString("profile_name"));
+                s.setMemberName(rs.getString("member_name"));
+                s.setMemberNickName(rs.getString("member_nickname"));
+                result.add(s);
+            }
+
+        }catch(SQLException e){
+            e.printStackTrace();
+        }finally {
+            close(rs);
+            close(psmt);
+        }
+
+        return result;
+    }
+
+    public List<User> SortRankChef(Connection conn, int cPage, int numPerPage,String sortRef){
         // 셰프랭킹 페이지 랭킹별정렬하는 메소드
 
         PreparedStatement psmt = null;
@@ -417,6 +565,7 @@ public class UserDao {
 
             while(rs.next()){
                 User u = new User();
+
                 u.setMemberId(rs.getString("member_id"));
                 u.setMemberName(rs.getString("member_name"));
                 u.setMemberEmail(rs.getString("member_email"));
@@ -426,6 +575,7 @@ public class UserDao {
                 u.setMemberPhone(rs.getString("member_phone"));
                 u.setMemberPoint(rs.getInt("member_point"));
                 u.setRecommendCount(rs.getInt("recommend_count"));
+
 
                 result.add(u);
             }
@@ -588,6 +738,10 @@ public class UserDao {
                 r.setRecipeProcedure(rs.getString("recipe_procedure"));
                 r.setRecipeTip(rs.getString("recipe_tip"));
                 r.setRecipeViewCount(rs.getInt("recipe_view_count"));
+
+                // 레시피 추천 수 추가
+                // 쿼리문 수정해야함.
+                r.setRecipeRecommend(rs.getInt("recipe_recommend"));
                 list.add(r);
             }
 
@@ -598,7 +752,6 @@ public class UserDao {
             close(pstmt);
         }
 
-        System.out.println("추천화면 데이터 출력");
         return list;
     }
 
