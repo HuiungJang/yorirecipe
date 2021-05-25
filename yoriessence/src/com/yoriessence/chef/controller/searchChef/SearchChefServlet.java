@@ -3,9 +3,10 @@ package com.yoriessence.chef.controller.searchChef;
 
 import com.yoriessence.chef.model.service.UserService;
 import com.yoriessence.chef.model.vo.Profile;
+import com.yoriessence.chef.model.vo.RecipeComment;
+import com.yoriessence.chef.model.vo.RecipeRecommend;
 import com.yoriessence.chef.model.vo.User;
 import com.yoriessence.recipe.model.vo.Recipe;
-import com.yoriessence.recipe.model.vo.RecipeComment;
 
 import javax.servlet.*;
 import javax.servlet.http.*;
@@ -22,7 +23,10 @@ public class SearchChefServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String chefName = request.getParameter("chefsearch");
         String sortVal = request.getParameter("sortVal");
-        String chefId = request.getParameter("chefId");
+
+        if(sortVal == null){
+            sortVal="최신순";
+        }
 
         List<Profile> chefProfile = new UserService().chefProfile(chefName);
         // 셰프 닉네임으로 검색해서 프로필 가져옴
@@ -46,14 +50,54 @@ public class SearchChefServlet extends HttpServlet {
                 request.setAttribute("chefProfile",reGetChefProfile);
             }
 
+            int cPage;
+            int numPerPage = 12;
+
+            try{
+                cPage = Integer.parseInt(request.getParameter("cPage"));
+            }catch (NumberFormatException e){
+                cPage =1;
+            }
+
+            int totalData = new UserService().countRecipeList();
+            int totalPage = (int)(Math.ceil((double)totalData/numPerPage));
+            int pageBarSize = 5;
+            int pageNo = ((cPage-1)/pageBarSize) * pageBarSize +1;
+            int pageEnd = pageNo+pageBarSize-1;
+
+            String pageBar = "";
+
+            if(pageNo == 1){
+                pageBar+="<span></span>";
+
+            }else{
+                pageBar+="<span><a href='"+request.getContextPath()+"/rankchef.do?cPage="+(cPage-1)+"'>이전</a></span>";
+            }
+
+            while(!(pageNo>pageEnd||pageNo>totalPage)){
+                if(cPage==pageNo){
+                    pageBar+="<span>"+pageNo+"</span>";
+                }else{
+                    pageBar+="<span><a href='"+request.getContextPath()+"/rankchef.do?cPage="+pageNo+"'>"+pageNo+"</a></span>";
+                }
+                pageNo++;
+            }
+
+            if(pageNo>totalPage){
+                pageBar+="<span></span>";
+            }else{
+                pageBar+="<span><a href='"+request.getContextPath()+"/chef/rankchef.do?cPage="+cPage+"'>다음</a></span>";
+            }
+            request.setAttribute("pageBar",pageBar);
+
+
             // 셰프가 올린 레시피에 달린 댓글 개수 가져옴
-            List<Integer> recipeComments = new UserService().countComment(chefName);
+            List<RecipeComment> recipeComments = new UserService().recipeCommentNum(chefName);
             request.setAttribute("countComment",recipeComments);
 
-
-            // 셰프가 올린 레시피의 추천수 가져옴
-            List<Integer> recipeRecommends = new UserService().countRecipeRecommend(chefName);
-            request.setAttribute("recipeRecommends",recipeRecommends);
+            // 댓글 수 포함 레시피를 정렬해서 가져옴
+            List<RecipeRecommend> recipeRecommend = new UserService().recipeRecommendNum(chefName,sortVal,cPage,numPerPage);
+            request.setAttribute("recipeRecommends",recipeRecommend);
 
 
             // 유저 정보를 가져옴
@@ -62,7 +106,7 @@ public class SearchChefServlet extends HttpServlet {
 
 
             if(sortVal != null){
-                List<Recipe> r = new UserService().sortRecipe(chefId,sortVal);
+                List<Recipe> r = new UserService().sortRecipe(chefName,sortVal);
                 // 정렬해서 가져옴
 
                 request.setAttribute("recipe",r);
