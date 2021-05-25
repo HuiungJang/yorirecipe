@@ -223,8 +223,15 @@
 	margin-top: 5px;
 }
 
+/* 추천수 탑 3 레시피*/
 .main-content #recommend_recipe{
-	margin-top:150px;
+	margin-top:250px;
+	display: grid;
+	grid-template-columns: 500px 333px 333px 333px;
+	justify-items: center;
+}
+
+.main-content #recommend_recipe *{
 }
 
 .main-content #recommend_recipe .recipe_icon{
@@ -233,14 +240,12 @@
 }
 .main-content #recommend_recipe .recipeData{
 	display: inline-block;
-	margin-left: 25px;
 }
+
 .main-content #recommend_recipe .recipeData div{
-	width:400px;
 	display: inline-block;
 }
 .main-content #recommend_recipe .recipeData div span{
-	padding-left:70px;
 	font-size:25px;
 }
 .main-content #recommend_recipe .recipeData .recipeTitle{
@@ -248,53 +253,82 @@
 	font-size:30px;
 }
 
-
+/* 셰프 탑 5 */
 .main-content #topChef{
-	margin-top:150px;
+	margin-top:300px;
 	font-size: 25px;
-	border: 1px #000000 solid;
+	display: grid;
+	grid-template-columns: minmax(280px,auto);
+	justify-items: center;
+
 }
 .main-content #topChef .chefData{
-	border: 1px #000000 solid;
-	width: 300px;
+	margin-left: 20px;
+	margin-top: 20px;
 }
+
 .main-content #topChef .chefData .chefName{
 	font-weight: bolder;
 	font-size: 25px;
-	padding-left: 105px;
+	padding-left:65px;
 }
 .main-content #topChef .chefData .chefNick{
 	font-size: 20px;
-	padding-left: 110px;
+	padding-left:80px;
+
 }
 .main-content #topChef .chefData div{
 	margin-top: 20px;
+	width: 300px;
 }
 .main-content #topChef .chefData div>span>button{
-	margin-left: 94px;
+	margin-left: 85px;
+}
+.main-content #topChef>span{
+	grid-column:1/4;
+	grid-row:1/2;
+	justify-self: left;
+
 }
 
+
+/* 최신 레시피 3개*/
 .main-content #recipe{
-	margin-top:150px;
+	margin-top:300px;
 	font-size: 20px;
+	display: grid;
+	justify-items: center;
 }
-
+.main-content #recipe .recipeData{
+	margin-top: 20px;
+}
 .main-content #recipe .recipeTitle{
 	font-size: 25px;
 	font-weight: bolder;
-	padding-left: 150px;
+	padding-left: 90px;
+}
+.main-content #recipe .recipeInfo{
+	font-size: 20px;
+	padding-left: 90px;
 }
 
 .main-content #recipe .recipeData div{
 	margin-top: 20px;
+	width: 250px;
+}
+.main-content #recipe>span{
+	grid-column:1/4;
+	grid-row:1/2;
+	justify-self: left;
 }
 
 
-/* 푸터 */
+	/* 푸터 */
 .footer {
 	margin-top:300px;
 	display: grid;
 	grid-template-columns: 200px 1100px 200px;
+	justify-items: center;
 }
 .footer div{
 	margin-left: 335px;

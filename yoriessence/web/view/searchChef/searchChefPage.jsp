@@ -1,7 +1,9 @@
 <%@ page import="java.util.List" %>
 <%@ page import="com.yoriessence.chef.model.vo.Profile" %>
 <%@ page import="com.yoriessence.recipe.model.vo.Recipe" %>
-<%@ page import="com.yoriessence.chef.model.vo.User" %><%--
+<%@ page import="com.yoriessence.chef.model.vo.User" %>
+<%@ page import="com.yoriessence.chef.model.vo.RecipeComment" %>
+<%@ page import="com.yoriessence.chef.model.vo.RecipeRecommend" %><%--
   Created by IntelliJ IDEA.
   User: jang
   Date: 2021/05/08
@@ -14,18 +16,20 @@
 <%
     List<Profile> chefProfile = (List<Profile>)request.getAttribute("chefProfile");
     List<Recipe> chefRecipe = (List<Recipe>)request.getAttribute("recipe");
-    List<Integer> countComment = (List<Integer>)request.getAttribute("countComment");
-    List<Integer> recipeRecommends  = (List<Integer>)request.getAttribute("recipeRecommends");
+    List<RecipeComment> countComment = (List<RecipeComment>)request.getAttribute("countComment");
+    List<RecipeRecommend> recipeRecommend = (List<RecipeRecommend>)request.getAttribute("recipeRecommends");
+
+    System.out.println(recipeRecommend.get(0).getProfileName());
     User userInfo = (User)request.getAttribute("userInfo");
 %>
 <section>
     <div id="chef_Profile">
         <div class="chefContainer">
-            <%if(chefProfile != null){%>
+            <%if(recipeRecommend != null){%>
                 <span id="picContainer">
 
-                    <%if(chefProfile.get(0).getProfilePic() != null){%>
-                        <img src="<%=request.getContextPath()%>/upload/profile/<%=chefProfile.get(0).getProfilePic()%>" height="200px" width="200px" style="border-radius: 200px">
+                    <%if(recipeRecommend.get(0).getRepresentPicture() != null){%>
+                        <img src="<%=request.getContextPath()%>/upload/profile/<%=recipeRecommend.get(0).getRepresentPicture()%>" height="200px" width="200px" style="border-radius: 200px">
                     <%}else{%>
                         <img src="<%=request.getContextPath()%>/img/icon/non_profile.png" height="200px" width="200px" style="border-radius: 200px">
                     <%}%>
@@ -35,22 +39,24 @@
                 <img class="recommendStar" src="" width="35px" height="35px">
                 <span id="chef_content">
                     <img src="<%=request.getContextPath()%>/img/icon/chef_cefti.png" width="50px" height="50px">
-                    <span id="chefTitle"><%=chefProfile.get(0).getProfileName()%></span>
+                    <span id="chefTitle"><%=recipeRecommend.get(0).getProfileName()%></span>
                     <span><img src="<%=request.getContextPath()%>/img/icon/icon_setting.png" width="40px" height="40px"></span>
                     <br><br><br>
                     <span class="text">
-                        <p><a><%=chefProfile.get(0).getSelfIntro()%></a></p>
+                        <p><a><%=recipeRecommend.get(0).getProfileSelfIntro()%></a></p>
                         <br>
 
-                        <%if(chefProfile.get(0).getProfileSnsUrl1() == null
-                                || chefProfile.get(0).getProfileSnsUrl1()== null){%>
+                        <%if(recipeRecommend.get(0).getProfileSNSUrl1() == null){%>
                             <span><a href=""><img class="snsIcon1" src=""></a></span>
-                            <span><a href=""><img class="snsIcon2" src=""></a></span>
                         <%}else{%>
-                            <span><a href="http://www.<%=chefProfile.get(0).getProfileSnsUrl1()%>"><img class="snsIcon1" src=""></a></span>
-                            <span><a href="http://www.<%=chefProfile.get(0).getProfileSnsUrl2()%>"><img class="snsIcon2" src=""></a></span>
+                            <span><a href="http://www.<%=recipeRecommend.get(0).getProfileSNSUrl1()%>"><img class="snsIcon1" src=""></a></span>
                         <%}%>
 
+                        <%if(recipeRecommend.get(0).getProfileSNSUrl2() == null){%>
+                            <span><a href=""><img class="snsIcon2" src=""></a></span>
+                        <%}else{%>
+                            <span><a href="http://www.<%=recipeRecommend.get(0).getProfileSNSUrl2()%>"><img class="snsIcon2" src=""></a></span>
+                        <%}%>
                     </span>
                 </span>
             <%}%>
@@ -82,8 +88,8 @@
 <%--                    프로필로--%>
                     <span>좋아요
                     <%try{%>
-                        <%=recipeRecommends.get(i)%>
-                    <%}catch (IndexOutOfBoundsException e){%>
+                        <%=recipeRecommend.get(i).getRecipeRecommendNum()%>
+                    <%}catch (NullPointerException e){%>
                         0
                     <%}%>
                     </span>
@@ -111,6 +117,7 @@
     const path = "<%=request.getContextPath()%>/img/icon/icon_";
     const snsIcon1 = $(".snsIcon1");
     const snsIcon2 = $(".snsIcon2");
+
 
     if(snsIcon1.parent().attr("href").includes("instagram")){
       snsIcon1.attr("src",path+"insta.png");
