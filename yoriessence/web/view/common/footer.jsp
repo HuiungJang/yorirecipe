@@ -1,4 +1,4 @@
-<%--
+ <%--
   Created by IntelliJ IDEA.
   User: jang
   Date: 2021/04/29
@@ -7,14 +7,16 @@
 --%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 
-<footer>
-    <div>
-        요리에센스
-    </div>
-    <div>
-        <p style="font-size: 40px;">KH ACE</p>
-        <p class="sign">세미프로젝트<br> 조장 : 장희웅 조원 : 김세희 박유현 최찬규</p>
-    </div>
-</footer>
-</body>
-</html>
+ <%--        section 끝 footer 시작--%>
+ <div class="footer">
+     <div></div>
+     <div>
+         <span>요리에센스</span>
+         <span>ⓒ 2021-2021 yoriessence All right reserved</span>
+         <span>장희웅, 김세희, 박유현, 최찬규</span>
+     </div>
+     <div></div>
+ </div>
+ </div>
+ </body>
+ </html>
