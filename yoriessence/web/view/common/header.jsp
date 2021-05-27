@@ -41,8 +41,6 @@
         $("#topChef *").remove();
         $("#recipe *").remove();
 
-        console.log(data);
-
         const imgtag = ' <div class="recipe_icon"><img src="<%=request.getContextPath()%>/img/mainImg/recipe_icon.png" width="400px"></div>';
         $("#recommend_recipe").append(imgtag);
 
@@ -75,6 +73,7 @@
 
         const $span = '<span style="font-size: 40px; font-weight: bolder; border-bottom: 1px #1f695b solid">셰프 TOP 5</span>';
         $("#topChef").append($span);
+
         $(data.bestFiveChef).each((i,v)=>{
             let val2='';
 
@@ -86,16 +85,15 @@
 
             }else{
               val2 += '<img src="<%=request.getContextPath()%>/img/icon/non_profile.png" width="280px" height="280px">';
-
             }
             val2 += '</a>';
             val2 += '<div>';
             val2 += '<a href="<%=request.getContextPath()%>/searchchef.do?chefsearch='+data.bestFiveChef[i].memberNickName+'"><span class="chefName">'+data.bestFiveChef[i].memberName+'</span></a><br>';
             val2 += '<a href="<%=request.getContextPath()%>/searchchef.do?chefsearch='+data.bestFiveChef[i].memberNickName+'"><span class="chefNick">'+data.bestFiveChef[i].memberNickName+'</span></a><br>';
             val2 += '<span>';
-            val2 += '<button>DM 보내기</button></span></div></div>';
+            val2 += '<button class="sendDM">DM 보내기</button><input type="hidden" value="'+data.bestFiveChef[i].memberId+'" class="chefId"></span></div></div>';
 
-          $("#topChef").append(val2);
+           $("#topChef").append(val2);
         });
 
         const $span2 = '<span style="font-size: 40px; font-weight: bolder; border-bottom: 1px #1f695b solid">최근 레시피</span>';
@@ -126,6 +124,27 @@
           $("#recipe").append(val3);
         });
 
+        $(function(){
+          $(".sendDM").click((e)=>{
+
+            let id = $(e.target).next().val();
+            let option = "width=550,height=650,resizable=no"
+            console.log(id);
+
+            <%if(loginMember != null){%>
+                let url="<%=request.getContextPath()%>/message?memberId=<%=loginMember.getUserId()%>&&targetId="+id;
+
+                window.open(url,"_blank",option);
+            <%}else{%>
+                if(confirm('로그인이 필요합니다. 로그인 하시겠습니까?')){
+                  trigger.click();
+                }else{
+                  return;
+                }
+            <%}%>
+          });
+        });
+
       },
       error: (e, m, i) => {
         console.log(e);
@@ -135,6 +154,17 @@
     });
   }
   mustStart();
+
+  <%if(loginMember.getUserId().equals("admin")){%>
+    $("#managerPage").attr("display","inline-block");
+
+    $("#managerPage").click(e=>{
+    if(confirm("관리자 페이지로 이동하시겠습니까?")){
+      location.assign("<%=request.getContextPath()%>/manager/main.do");
+    }
+    });
+  <%}%>
+
 
 
 </script>
@@ -182,14 +212,14 @@
                     </a>
                 </span>
             <%}else{ %>
-                <a><img src="" width="55px" height="55px"></a>
+                <a><img src="<%=request.getContextPath()%>/img/icon/icon_login.png" width="55px" height="55px"></a>
                 <ul id="dropdown_ul2">
                     <li><a href="<%=request.getContextPath()%>/searchchef.do?chefsearch=<%=loginMember.getUserId()%>">프로필</a></li>
                     <li><a href="<%=request.getContextPath()%>/member/memberPwCheck?userId=<%=loginMember.getUserId()%>">회원정보수정</a></li>
                     <li><a href="#">나의레시피</a></li>
                     <li><a href="#">주문정보</a></li>
                     <li><a href="#">나의포인트</a></li>
-                    <li><a href="#">고객센터</a></li>
+                    <li><a href="<%=request.getContextPath()%>/notice/noticeList">고객센터</a></li>
                     <li><a href="<%=request.getContextPath()%>/member/logout.do">로그아웃</a></li>
                 </ul>
             <%} %>
@@ -211,7 +241,7 @@
                     </span>
                         </div>
                         <div class="input-container">
-                            <input type="password" name="userPwd" id="login_password" class="input-default" placeholder="비밀번호" title="비밀번호 입력">
+                            <input type="password" name="password" id="login_password" class="input-default" placeholder="비밀번호" title="비밀번호 입력">
                         </div>
                         <div class="alert-container inline-block">
                             <span id="loginAlertPassword" class="alert-text hidden">...</span>
@@ -249,6 +279,11 @@
                         <div class="join">
                             <a href="<%=request.getContextPath()%>/member/memberEnroll">회원가입</a>
                         </div>
+                        <form action="<%=request.getContextPath() %>/member/memberKakaoLogin" method="post" id="kakaologinform" name="kakaologinform">
+		             		<input type="hidden"  id="kakao_id" name="kakao_id">
+		             		<input type="hidden"  id="kakao_email" name="kakao_email">
+		             		<input type="hidden"  id="kakao_name" name="kakao_name">
+		             	</form>
                     </div>
                 </div>
             </div>
@@ -286,17 +321,57 @@
 
 
       // 카카오 로그인
-      Kakao.init('9821b1adf6591b5708f7ee0615e8458b');
+     	Kakao.init('9821b1adf6591b5708f7ee0615e8458b');
       Kakao.Auth.createLoginButton({
-        container: '#kakao-login-btn',
-        success: function (authObj) {
-          alert(JSON.stringify(authObj));
-        },
-        fail: function (err) {
-          alert(JSON.stringify(err));
-        }
+          container: '#kakao-login-btn',
+          success: function (authObj) {
+          	Kakao.API.request({
+              	url: '/v2/user/me',
+              	success: function(res) {
+                  	var userId = res.id;
+                  	var userEmail = res.kakao_account.email;
+                  	var userName = res.properties.nickname;
+                  	
+                  	console.log(userId);
+                  	console.log(userEmail);
+                  	console.log(userName);
+                  	console.log(res.kakao_account);
+                  	
+			          	kakaologinform.kakao_id.value=userId;
+			           	kakaologinform.kakao_email.value=userEmail;
+			           	kakaologinform.kakao_name.value=userName
+			           	kakaologinform.submit();
+                   },
+                   fail: function(error) {
+                     alert(JSON.stringify(error));
+                   }
+                 });
+	           	
+          	 if(!Kakao.Auth.getAccessToken()){
+           		console.log("토큰없음");
+           		return;
+           	}else{
+           		console.log("토큰있음");
+           		console.log(Kakao.Auth.getAccessToken())
+           		return;
+           	}
+          },
+          fail: function (err) {
+              alert(JSON.stringify(err));
+          }
       });
-
+      //카카오 로그아웃
+      logoutWithKakao=()=>{
+      	if(Kakao.Auth.getAccessToken()){
+      		console.log('카카오 인증 액세스 토큰이 존재합니다',Kakao.Auth.getAccessToken())
+      		Kakao.Auth.logout(()=>{
+      			consol.log('로그아웃 되었습니다',Kakao.Auth.getAccessToken());
+      			this.setState({
+      				isLogin:false
+      			})
+      		});
+      	}
+      }
       //구글 테스트
       function init() {
         gapi.load('auth2', function() {
@@ -386,6 +461,7 @@
         this.reciver=reciver;
         this.msg=msg;
       }
+
 
     </script>
     <%--        header 끝 section 시작--%>
